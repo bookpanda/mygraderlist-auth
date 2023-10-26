@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "src/proto";
+
+service UserService {
+  rpc FindByStudentID(FindByStudentIDUserRequest) returns(FindByStudentIDUserResponse) {}
+  rpc Create(CreateUserRequest) returns (CreateUserResponse){}
+}
+
+message User{
+  string id = 1;
+  string title = 2;
+  string firstname = 3;
+  string lastname = 4;
+  string nickname = 5;
+  string studentID = 6;
+  string faculty = 7;
+  string year = 8;
+  string phone = 9;
+  string lineID = 10;
+  string email = 11;
+  string allergyFood = 12;
+  string foodRestriction = 13;
+  string allergyMedicine = 14;
+  string disease = 15;
+  string imageUrl = 16;
+  bool canSelectBaan = 17;
+}
+
+// Find By Student ID
+
+message FindByStudentIDUserRequest{
+  string studentId = 1;
+}
+
+message FindByStudentIDUserResponse{
+  User user = 1;
+}
+
+// Create
+
+message CreateUserRequest{
+  User user = 1;
+}
+
+message CreateUserResponse{
+  User user = 1;
+}
