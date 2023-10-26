@@ -17,7 +17,6 @@ import (
 	ts "github.com/bookpanda/mygraderlist-auth/src/app/service/token"
 	"github.com/bookpanda/mygraderlist-auth/src/app/service/user"
 	jsg "github.com/bookpanda/mygraderlist-auth/src/app/strategy"
-	"github.com/bookpanda/mygraderlist-auth/src/client"
 	"github.com/bookpanda/mygraderlist-auth/src/config"
 	"github.com/bookpanda/mygraderlist-auth/src/database"
 	"github.com/bookpanda/mygraderlist-auth/src/proto"
@@ -128,8 +127,6 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 
-	cSSO := client.NewChulaSSO(conf.ChulaSSO)
-
 	cacheRepo := cache.NewRepository(cacheDB)
 
 	usrClient := proto.NewUserServiceClient(backendConn)
@@ -141,7 +138,7 @@ func main() {
 	tkSrv := ts.NewTokenService(jtSrv, cacheRepo)
 
 	aRepo := ar.NewRepository(db)
-	aSrv := as.NewService(aRepo, cSSO, tkSrv, usrSrv, conf.App)
+	aSrv := as.NewService(aRepo, tkSrv, usrSrv, conf.App)
 
 	grpc_health_v1.RegisterHealthServer(grpcServer, health.NewServer())
 	proto.RegisterAuthServiceServer(grpcServer, aSrv)

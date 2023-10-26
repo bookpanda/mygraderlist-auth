@@ -53,20 +53,6 @@ func (r *RepositoryMock) Update(id string, in *model.Auth) error {
 	return args.Error(1)
 }
 
-type ChulaSSOClientMock struct {
-	mock.Mock
-}
-
-func (c *ChulaSSOClientMock) VerifyTicket(ticket string, result *dto.ChulaSSOCredential) error {
-	args := c.Called(ticket, result)
-
-	if args.Get(0) != nil {
-		*result = *args.Get(0).(*dto.ChulaSSOCredential)
-	}
-
-	return args.Error(1)
-}
-
 type UserServiceMock struct {
 	mock.Mock
 }
