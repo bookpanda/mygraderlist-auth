@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  local-db:
+    image: mysql:8.0.28-oracle
+    container_name: mgl-local-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mgl-auth-db
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
