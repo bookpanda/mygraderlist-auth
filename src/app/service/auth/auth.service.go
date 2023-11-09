@@ -28,7 +28,6 @@ type IRepository interface {
 }
 
 type IUserService interface {
-	FindByStudentID(string) (*proto.User, error)
 	Create(*proto.User) (*proto.User, error)
 }
 

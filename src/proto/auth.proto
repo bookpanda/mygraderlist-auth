@@ -5,7 +5,6 @@ package auth;
 option go_package = "src/proto";
 
 service AuthService {
-  rpc VerifyTicket(VerifyTicketRequest) returns (VerifyTicketResponse){}
   rpc Validate(ValidateRequest) returns (ValidateResponse){}
   rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse){}
 }
@@ -14,16 +13,6 @@ message Credential{
   string accessToken = 1;
   string refreshToken = 2;
   int32 expiresIn = 3;
-}
-
-// Verify
-
-message VerifyTicketRequest{
-  string ticket = 1;
-}
-
-message VerifyTicketResponse{
-  Credential credential = 1;
 }
 
 // Validate
