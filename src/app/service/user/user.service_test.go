@@ -37,6 +37,66 @@ func (t *UserServiceTest) SetupTest() {
 	t.ServiceDownErr = errors.New("Service is down")
 }
 
+func (t *UserServiceTest) TestFindByEmailSuccess() {
+	want := t.UserDto
+
+	c := &mock.ClientMock{}
+	c.On("FindByEmail", &proto.FindByEmailUserRequest{Email: t.UserDto.Email}).
+		Return(&proto.FindByEmailUserResponse{User: t.UserDto}, nil)
+
+	srv := NewUserService(c)
+
+	actual, err := srv.FindByEmail(t.UserDto.Email)
+
+	assert.Nil(t.T(), err)
+	assert.Equal(t.T(), want, actual)
+}
+
+func (t *UserServiceTest) TestFindByEmailUnauthorized() {
+	c := &mock.ClientMock{}
+	c.On("FindByEmail", &proto.FindByEmailUserRequest{Email: t.UserDto.Email}).
+		Return(nil, status.Error(codes.Unauthenticated, t.NotFoundErr.Error()))
+
+	srv := NewUserService(c)
+
+	actual, err := srv.FindByEmail(t.UserDto.Email)
+
+	st, ok := status.FromError(err)
+	assert.True(t.T(), ok)
+	assert.Nil(t.T(), actual)
+	assert.Equal(t.T(), codes.Unauthenticated, st.Code())
+}
+
+func (t *UserServiceTest) TestFindByEmailNotFound() {
+	c := &mock.ClientMock{}
+	c.On("FindByEmail", &proto.FindByEmailUserRequest{Email: t.UserDto.Email}).
+		Return(nil, status.Error(codes.NotFound, t.NotFoundErr.Error()))
+
+	srv := NewUserService(c)
+
+	actual, err := srv.FindByEmail(t.UserDto.Email)
+
+	st, ok := status.FromError(err)
+	assert.True(t.T(), ok)
+	assert.Nil(t.T(), actual)
+	assert.Equal(t.T(), codes.NotFound, st.Code())
+}
+
+func (t *UserServiceTest) TestFindByEmailGrpcError() {
+	c := &mock.ClientMock{}
+	c.On("FindByEmail", &proto.FindByEmailUserRequest{Email: t.UserDto.Email}).
+		Return(nil, status.Error(codes.Unavailable, t.ServiceDownErr.Error()))
+
+	srv := NewUserService(c)
+
+	actual, err := srv.FindByEmail(t.UserDto.Email)
+
+	st, ok := status.FromError(err)
+	assert.True(t.T(), ok)
+	assert.Nil(t.T(), actual)
+	assert.Equal(t.T(), codes.Unavailable, st.Code())
+}
+
 func (t *UserServiceTest) TestCreateSuccess() {
 	want := t.UserDto
 
