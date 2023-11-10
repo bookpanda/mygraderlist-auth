@@ -31,3 +31,6 @@ volumes
 # coverage report
 coverage.out
 coverage.html
+
+# docker build . -t ghcr.io/bookpanda/mygraderlist-auth
+# docker push ghcr.io/bookpanda/mygraderlist-auth
