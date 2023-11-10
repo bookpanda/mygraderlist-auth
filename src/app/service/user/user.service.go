@@ -15,6 +15,18 @@ func NewUserService(client proto.UserServiceClient) *Service {
 	return &Service{client: client}
 }
 
+func (s *Service) FindByEmail(email string) (*proto.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5000)
+	defer cancel()
+
+	res, err := s.client.FindByEmail(ctx, &proto.FindByEmailUserRequest{Email: email})
+	if err != nil {
+		return nil, err
+	}
+
+	return res.User, nil
+}
+
 func (s *Service) Create(user *proto.User) (*proto.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5000)
 	defer cancel()
