@@ -10,6 +10,7 @@ import (
 	"github.com/bookpanda/mygraderlist-auth/src/app/utils"
 	"github.com/bookpanda/mygraderlist-auth/src/client"
 	"github.com/bookpanda/mygraderlist-auth/src/config"
+	role "github.com/bookpanda/mygraderlist-auth/src/constant/auth"
 	"github.com/bookpanda/mygraderlist-auth/src/proto"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/oauth2"
@@ -34,6 +35,7 @@ type IRepository interface {
 }
 
 type IUserService interface {
+	FindByEmail(string) (*proto.User, error)
 	Create(*proto.User) (*proto.User, error)
 }
 
@@ -121,4 +123,90 @@ func (s *Service) GetGoogleLoginUrl(context.Context, *proto.GetGoogleLoginUrlReq
 	return &proto.GetGoogleLoginUrlResponse{
 		Url: url,
 	}, nil
+}
+
+func (s *Service) VerifyGoogleLogin(ctx context.Context, req *proto.VerifyGoogleLoginRequest) (*proto.VerifyGoogleLoginResponse, error) {
+	code := req.GetCode()
+	auth := model.Auth{}
+
+	if code == "" {
+		return nil, status.Error(codes.InvalidArgument, "No code is provided")
+	}
+
+	response, err := s.googleOauthClient.GetUserEmail(code)
+	if err != nil {
+		switch err.Error() {
+		case "Invalid code":
+			return nil, status.Error(codes.InvalidArgument, "Invalid code")
+		default:
+			log.Error().Err(err).Msg("Unable to get user info")
+			return nil, status.Error(codes.Internal, "Internal server error")
+		}
+	}
+
+	email := response.Email
+	user, err := s.userService.FindByEmail(email)
+	if err != nil {
+		st, ok := status.FromError(err)
+		if ok {
+			switch st.Code() {
+			case codes.NotFound:
+				in := &proto.User{
+					Email:    email,
+					Username: response.Firstname,
+				}
+
+				user, err = s.userService.Create(in)
+				if err != nil {
+					return nil, status.Error(codes.InvalidArgument, st.Message())
+				}
+
+				auth = model.Auth{
+					Role:   role.USER,
+					UserID: user.Id,
+				}
+
+				err = s.repo.Create(&auth)
+				if err != nil {
+					log.Error().
+						Err(err).
+						Str("service", "auth").
+						Str("module", "google").
+						Msg("Error creating the auth data")
+					return nil, status.Error(codes.Unavailable, st.Message())
+				}
+
+			default:
+				log.Error().
+					Err(err).
+					Str("service", "auth").
+					Str("module", "google").
+					Msg("Service is down")
+				return nil, status.Error(codes.Unavailable, st.Message())
+			}
+		} else {
+			log.Error().
+				Err(err).
+				Str("service", "auth").
+				Str("module", "google").
+				Msg("Error connect to sso")
+			return nil, status.Error(codes.Unavailable, "Service is down")
+		}
+	} else {
+		err := s.repo.FindByUserID(user.Id, &auth)
+		if err != nil {
+			return nil, status.Error(codes.NotFound, "not found user")
+		}
+	}
+
+	credentials, err := s.CreateNewCredential(&auth)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	log.Info().
+		Str("service", "auth").
+		Msg("User login to the service")
+
+	return &proto.VerifyGoogleLoginResponse{Credential: credentials}, err
 }
