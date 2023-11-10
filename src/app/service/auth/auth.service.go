@@ -2,22 +2,28 @@ package auth
 
 import (
 	"context"
+	"net/url"
+	"strings"
 
 	dto "github.com/bookpanda/mygraderlist-auth/src/app/dto/auth"
 	model "github.com/bookpanda/mygraderlist-auth/src/app/model/auth"
 	"github.com/bookpanda/mygraderlist-auth/src/app/utils"
+	"github.com/bookpanda/mygraderlist-auth/src/client"
 	"github.com/bookpanda/mygraderlist-auth/src/config"
 	"github.com/bookpanda/mygraderlist-auth/src/proto"
 	"github.com/rs/zerolog/log"
+	"golang.org/x/oauth2"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type Service struct {
-	repo         IRepository
-	tokenService ITokenService
-	userService  IUserService
-	conf         config.App
+	repo              IRepository
+	tokenService      ITokenService
+	userService       IUserService
+	conf              config.App
+	oauthConfig       *oauth2.Config
+	googleOauthClient *client.GoogleOauthClient
 }
 
 type IRepository interface {
@@ -96,4 +102,23 @@ func (s *Service) CreateNewCredential(auth *model.Auth) (*proto.Credential, erro
 	}
 
 	return credentials, nil
+}
+
+func (s *Service) GetGoogleLoginUrl(context.Context, *proto.GetGoogleLoginUrlRequest) (*proto.GetGoogleLoginUrlResponse, error) {
+	URL, err := url.Parse(s.oauthConfig.Endpoint.AuthURL)
+	if err != nil {
+		log.Error().Err(err).Msg("unable to parse url")
+		return nil, status.Error(codes.Internal, "Internal server error")
+	}
+	parameters := url.Values{}
+	parameters.Add("client_id", s.oauthConfig.ClientID)
+	parameters.Add("scope", strings.Join(s.oauthConfig.Scopes, " "))
+	parameters.Add("redirect_uri", s.oauthConfig.RedirectURL)
+	parameters.Add("response_type", "code")
+	URL.RawQuery = parameters.Encode()
+	url := URL.String()
+
+	return &proto.GetGoogleLoginUrlResponse{
+		Url: url,
+	}, nil
 }
