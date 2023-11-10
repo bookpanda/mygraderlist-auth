@@ -7,6 +7,12 @@ on:
       - master
       - main
       - beta
+  push:
+    branches:
+      - dev
+      - master
+      - main
+      - beta
 
 jobs:
   build:
