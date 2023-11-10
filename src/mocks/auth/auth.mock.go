@@ -57,8 +57,8 @@ type UserServiceMock struct {
 	mock.Mock
 }
 
-func (c *UserServiceMock) FindByStudentID(id string) (result *proto.User, err error) {
-	args := c.Called(id)
+func (c *UserServiceMock) FindByEmail(email string) (result *proto.User, err error) {
+	args := c.Called(email)
 
 	if args.Get(0) != nil {
 		result = args.Get(0).(*proto.User)
