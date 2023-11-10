@@ -87,7 +87,6 @@ type AuthServiceServer interface {
 	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
 	GetGoogleLoginUrl(context.Context, *GetGoogleLoginUrlRequest) (*GetGoogleLoginUrlResponse, error)
 	VerifyGoogleLogin(context.Context, *VerifyGoogleLoginRequest) (*VerifyGoogleLoginResponse, error)
-	mustEmbedUnimplementedAuthServiceServer()
 }
 
 // UnimplementedAuthServiceServer must be embedded to have forward compatible implementations.
