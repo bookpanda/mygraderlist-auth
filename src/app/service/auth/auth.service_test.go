@@ -13,7 +13,8 @@ import (
 	"github.com/bookpanda/mygraderlist-auth/src/app/utils"
 	"github.com/bookpanda/mygraderlist-auth/src/config"
 	role "github.com/bookpanda/mygraderlist-auth/src/constant/auth"
-	"github.com/bookpanda/mygraderlist-auth/src/proto"
+	auth_proto "github.com/bookpanda/mygraderlist-proto/MyGraderList/auth"
+	user_proto "github.com/bookpanda/mygraderlist-proto/MyGraderList/backend/user"
 	"github.com/bxcodec/faker/v3"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
@@ -28,8 +29,8 @@ import (
 type AuthServiceTest struct {
 	suite.Suite
 	Auth            *auth.Auth
-	UserDto         *proto.User
-	Credential      *proto.Credential
+	UserDto         *user_proto.User
+	Credential      *auth_proto.Credential
 	Payload         *dto.TokenPayloadAuth
 	UserCredential  *dto.UserCredential
 	conf            config.App
@@ -55,13 +56,13 @@ func (t *AuthServiceTest) SetupTest() {
 		RefreshToken: faker.Word(),
 	}
 
-	t.UserDto = &proto.User{
+	t.UserDto = &user_proto.User{
 		Id:       t.Auth.UserID,
 		Username: faker.Username(),
 		Email:    faker.Email(),
 	}
 
-	t.Credential = &proto.Credential{
+	t.Credential = &auth_proto.Credential{
 		AccessToken:  faker.Word(),
 		RefreshToken: t.Auth.RefreshToken,
 		ExpiresIn:    3600,
@@ -94,7 +95,7 @@ func (t *AuthServiceTest) SetupTest() {
 }
 
 func (t *AuthServiceTest) TestValidateSuccess() {
-	want := &proto.ValidateResponse{
+	want := &auth_proto.ValidateResponse{
 		UserId: t.UserDto.Id,
 		Role:   t.Auth.Role,
 	}
@@ -109,7 +110,7 @@ func (t *AuthServiceTest) TestValidateSuccess() {
 
 	srv := NewService(repo, tokenService, userService, t.conf)
 
-	actual, err := srv.Validate(context.Background(), &proto.ValidateRequest{Token: token})
+	actual, err := srv.Validate(context.Background(), &auth_proto.ValidateRequest{Token: token})
 
 	assert.Nilf(t.T(), err, "error: %v", err)
 	assert.Equal(t.T(), want, actual)
@@ -127,7 +128,7 @@ func (t *AuthServiceTest) TestValidateInvalidToken() {
 
 	srv := NewService(repo, tokenService, userService, t.conf)
 
-	actual, err := srv.Validate(context.Background(), &proto.ValidateRequest{Token: token})
+	actual, err := srv.Validate(context.Background(), &auth_proto.ValidateRequest{Token: token})
 
 	st, ok := status.FromError(err)
 
@@ -140,7 +141,7 @@ func (t *AuthServiceTest) TestRedeemRefreshTokenSuccess() {
 	token := faker.Word()
 	t.Auth.RefreshToken = utils.Hash([]byte(t.Credential.RefreshToken))
 
-	want := &proto.RefreshTokenResponse{Credential: t.Credential}
+	want := &auth_proto.RefreshTokenResponse{Credential: t.Credential}
 
 	repo := &mock.RepositoryMock{}
 	repo.On("FindByRefreshToken", utils.Hash([]byte(token)), &auth.Auth{}).Return(t.Auth, nil)
@@ -154,7 +155,7 @@ func (t *AuthServiceTest) TestRedeemRefreshTokenSuccess() {
 
 	srv := NewService(repo, tokenService, userService, t.conf)
 
-	actual, err := srv.RefreshToken(context.Background(), &proto.RefreshTokenRequest{RefreshToken: token})
+	actual, err := srv.RefreshToken(context.Background(), &auth_proto.RefreshTokenRequest{RefreshToken: token})
 
 	assert.Nilf(t.T(), err, "error: %v", err)
 	assert.Equal(t.T(), want, actual)
@@ -176,7 +177,7 @@ func (t *AuthServiceTest) TestRedeemRefreshTokenInvalidToken() {
 
 	srv := NewService(repo, tokenService, userService, t.conf)
 
-	actual, err := srv.RefreshToken(context.Background(), &proto.RefreshTokenRequest{RefreshToken: token})
+	actual, err := srv.RefreshToken(context.Background(), &auth_proto.RefreshTokenRequest{RefreshToken: token})
 
 	st, ok := status.FromError(err)
 
@@ -200,7 +201,7 @@ func (t *AuthServiceTest) TestRedeemRefreshTokenInternalErr() {
 
 	srv := NewService(repo, tokenService, userService, t.conf)
 
-	actual, err := srv.RefreshToken(context.Background(), &proto.RefreshTokenRequest{RefreshToken: token})
+	actual, err := srv.RefreshToken(context.Background(), &auth_proto.RefreshTokenRequest{RefreshToken: token})
 
 	st, ok := status.FromError(err)
 

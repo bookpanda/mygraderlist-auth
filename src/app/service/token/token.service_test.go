@@ -11,7 +11,7 @@ import (
 	"github.com/bookpanda/mygraderlist-auth/src/constant/auth"
 	mock "github.com/bookpanda/mygraderlist-auth/src/mocks/auth"
 	"github.com/bookpanda/mygraderlist-auth/src/mocks/cache"
-	"github.com/bookpanda/mygraderlist-auth/src/proto"
+	auth_proto "github.com/bookpanda/mygraderlist-proto/MyGraderList/auth"
 	"github.com/bxcodec/faker/v3"
 	"github.com/go-redis/redis/v8"
 	"github.com/golang-jwt/jwt/v4"
@@ -24,7 +24,7 @@ import (
 
 type TokenServiceTest struct {
 	suite.Suite
-	Credential   *proto.Credential
+	Credential   *auth_proto.Credential
 	Auth         *model.Auth
 	Token        *jwt.Token
 	TokenDecoded jwt.MapClaims
@@ -43,7 +43,7 @@ func (t *TokenServiceTest) SetupTest() {
 		Issuer:    faker.Word(),
 	}
 
-	t.Credential = &proto.Credential{
+	t.Credential = &auth_proto.Credential{
 		AccessToken:  faker.Word(),
 		RefreshToken: faker.Word(),
 		ExpiresIn:    3600,
@@ -128,7 +128,7 @@ func (t *TokenServiceTest) TestCreateCredentialsInternalErr() {
 
 	actual, err := srv.CreateCredentials(t.Auth, "asuperstrong32bitpasswordgohere!")
 
-	var credential *proto.Credential
+	var credential *auth_proto.Credential
 
 	assert.Equal(t.T(), credential, actual)
 	assert.Equal(t.T(), want.Error(), err.Error())

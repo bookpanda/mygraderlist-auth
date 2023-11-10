@@ -7,7 +7,7 @@ import (
 	model "github.com/bookpanda/mygraderlist-auth/src/app/model/auth"
 	"github.com/bookpanda/mygraderlist-auth/src/config"
 	role "github.com/bookpanda/mygraderlist-auth/src/constant/auth"
-	"github.com/bookpanda/mygraderlist-auth/src/proto"
+	auth_proto "github.com/bookpanda/mygraderlist-proto/MyGraderList/auth"
 	"github.com/go-redis/redis/v8"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
@@ -38,7 +38,7 @@ func NewTokenService(jwtService IJwtService, cacheRepository ICacheRepository) *
 	}
 }
 
-func (s *Service) CreateCredentials(auth *model.Auth, secret string) (*proto.Credential, error) {
+func (s *Service) CreateCredentials(auth *model.Auth, secret string) (*auth_proto.Credential, error) {
 	token, err := s.jwtService.SignAuth(auth)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (s *Service) CreateCredentials(auth *model.Auth, secret string) (*proto.Cre
 		return nil, errors.New("Internal service error")
 	}
 
-	credential := &proto.Credential{
+	credential := &auth_proto.Credential{
 		AccessToken:  token,
 		RefreshToken: s.CreateRefreshToken(),
 		ExpiresIn:    s.jwtService.GetConfig().ExpiresIn,

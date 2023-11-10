@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	mock "github.com/bookpanda/mygraderlist-auth/src/mocks/user"
-	"github.com/bookpanda/mygraderlist-auth/src/proto"
+	user_proto "github.com/bookpanda/mygraderlist-proto/MyGraderList/backend/user"
 	"github.com/bxcodec/faker/v3"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +15,7 @@ import (
 
 type UserServiceTest struct {
 	suite.Suite
-	UserDto         *proto.User
+	UserDto         *user_proto.User
 	UnauthorizedErr error
 	NotFoundErr     error
 	ServiceDownErr  error
@@ -26,7 +26,7 @@ func TestUserService(t *testing.T) {
 }
 
 func (t *UserServiceTest) SetupTest() {
-	t.UserDto = &proto.User{
+	t.UserDto = &user_proto.User{
 		Id:       faker.UUIDDigit(),
 		Username: faker.Username(),
 		Email:    faker.Email(),
@@ -41,8 +41,8 @@ func (t *UserServiceTest) TestFindByEmailSuccess() {
 	want := t.UserDto
 
 	c := &mock.ClientMock{}
-	c.On("FindByEmail", &proto.FindByEmailUserRequest{Email: t.UserDto.Email}).
-		Return(&proto.FindByEmailUserResponse{User: t.UserDto}, nil)
+	c.On("FindByEmail", &user_proto.FindByEmailUserRequest{Email: t.UserDto.Email}).
+		Return(&user_proto.FindByEmailUserResponse{User: t.UserDto}, nil)
 
 	srv := NewUserService(c)
 
@@ -54,7 +54,7 @@ func (t *UserServiceTest) TestFindByEmailSuccess() {
 
 func (t *UserServiceTest) TestFindByEmailUnauthorized() {
 	c := &mock.ClientMock{}
-	c.On("FindByEmail", &proto.FindByEmailUserRequest{Email: t.UserDto.Email}).
+	c.On("FindByEmail", &user_proto.FindByEmailUserRequest{Email: t.UserDto.Email}).
 		Return(nil, status.Error(codes.Unauthenticated, t.NotFoundErr.Error()))
 
 	srv := NewUserService(c)
@@ -69,7 +69,7 @@ func (t *UserServiceTest) TestFindByEmailUnauthorized() {
 
 func (t *UserServiceTest) TestFindByEmailNotFound() {
 	c := &mock.ClientMock{}
-	c.On("FindByEmail", &proto.FindByEmailUserRequest{Email: t.UserDto.Email}).
+	c.On("FindByEmail", &user_proto.FindByEmailUserRequest{Email: t.UserDto.Email}).
 		Return(nil, status.Error(codes.NotFound, t.NotFoundErr.Error()))
 
 	srv := NewUserService(c)
@@ -84,7 +84,7 @@ func (t *UserServiceTest) TestFindByEmailNotFound() {
 
 func (t *UserServiceTest) TestFindByEmailGrpcError() {
 	c := &mock.ClientMock{}
-	c.On("FindByEmail", &proto.FindByEmailUserRequest{Email: t.UserDto.Email}).
+	c.On("FindByEmail", &user_proto.FindByEmailUserRequest{Email: t.UserDto.Email}).
 		Return(nil, status.Error(codes.Unavailable, t.ServiceDownErr.Error()))
 
 	srv := NewUserService(c)
@@ -101,12 +101,12 @@ func (t *UserServiceTest) TestCreateSuccess() {
 	want := t.UserDto
 
 	c := &mock.ClientMock{}
-	c.On("Create", &proto.CreateUserRequest{User: &proto.User{}}).
-		Return(&proto.CreateUserResponse{User: t.UserDto}, nil)
+	c.On("Create", &user_proto.CreateUserRequest{User: &user_proto.User{}}).
+		Return(&user_proto.CreateUserResponse{User: t.UserDto}, nil)
 
 	srv := NewUserService(c)
 
-	actual, err := srv.Create(&proto.User{})
+	actual, err := srv.Create(&user_proto.User{})
 
 	assert.Nil(t.T(), err)
 	assert.Equal(t.T(), want, actual)
@@ -114,12 +114,12 @@ func (t *UserServiceTest) TestCreateSuccess() {
 
 func (t *UserServiceTest) TestCreateGrpcErr() {
 	c := &mock.ClientMock{}
-	c.On("Create", &proto.CreateUserRequest{User: &proto.User{}}).
+	c.On("Create", &user_proto.CreateUserRequest{User: &user_proto.User{}}).
 		Return(nil, status.Error(codes.Unavailable, t.ServiceDownErr.Error()))
 
 	srv := NewUserService(c)
 
-	actual, err := srv.Create(&proto.User{})
+	actual, err := srv.Create(&user_proto.User{})
 
 	st, ok := status.FromError(err)
 	assert.True(t.T(), ok)

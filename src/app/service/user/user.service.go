@@ -4,22 +4,22 @@ import (
 	"context"
 	"time"
 
-	"github.com/bookpanda/mygraderlist-auth/src/proto"
+	user_proto "github.com/bookpanda/mygraderlist-proto/MyGraderList/backend/user"
 )
 
 type Service struct {
-	client proto.UserServiceClient
+	client user_proto.UserServiceClient
 }
 
-func NewUserService(client proto.UserServiceClient) *Service {
+func NewUserService(client user_proto.UserServiceClient) *Service {
 	return &Service{client: client}
 }
 
-func (s *Service) FindByEmail(email string) (*proto.User, error) {
+func (s *Service) FindByEmail(email string) (*user_proto.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5000)
 	defer cancel()
 
-	res, err := s.client.FindByEmail(ctx, &proto.FindByEmailUserRequest{Email: email})
+	res, err := s.client.FindByEmail(ctx, &user_proto.FindByEmailUserRequest{Email: email})
 	if err != nil {
 		return nil, err
 	}
@@ -27,11 +27,11 @@ func (s *Service) FindByEmail(email string) (*proto.User, error) {
 	return res.User, nil
 }
 
-func (s *Service) Create(user *proto.User) (*proto.User, error) {
+func (s *Service) Create(user *user_proto.User) (*user_proto.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5000)
 	defer cancel()
 
-	res, err := s.client.Create(ctx, &proto.CreateUserRequest{User: user})
+	res, err := s.client.Create(ctx, &user_proto.CreateUserRequest{User: user})
 	if err != nil {
 		return nil, err
 	}

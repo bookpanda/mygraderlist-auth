@@ -4,7 +4,8 @@ import (
 	dto "github.com/bookpanda/mygraderlist-auth/src/app/dto/auth"
 	model "github.com/bookpanda/mygraderlist-auth/src/app/model/auth"
 	"github.com/bookpanda/mygraderlist-auth/src/config"
-	"github.com/bookpanda/mygraderlist-auth/src/proto"
+	auth_proto "github.com/bookpanda/mygraderlist-proto/MyGraderList/auth"
+	user_proto "github.com/bookpanda/mygraderlist-proto/MyGraderList/backend/user"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/stretchr/testify/mock"
 )
@@ -57,21 +58,21 @@ type UserServiceMock struct {
 	mock.Mock
 }
 
-func (c *UserServiceMock) FindByEmail(email string) (result *proto.User, err error) {
+func (c *UserServiceMock) FindByEmail(email string) (result *user_proto.User, err error) {
 	args := c.Called(email)
 
 	if args.Get(0) != nil {
-		result = args.Get(0).(*proto.User)
+		result = args.Get(0).(*user_proto.User)
 	}
 
 	return result, args.Error(1)
 }
 
-func (c *UserServiceMock) Create(in *proto.User) (result *proto.User, err error) {
+func (c *UserServiceMock) Create(in *user_proto.User) (result *user_proto.User, err error) {
 	args := c.Called(in)
 
 	if args.Get(0) != nil {
-		result = args.Get(0).(*proto.User)
+		result = args.Get(0).(*user_proto.User)
 	}
 
 	return result, args.Error(1)
@@ -107,11 +108,11 @@ type TokenServiceMock struct {
 	mock.Mock
 }
 
-func (s *TokenServiceMock) CreateCredentials(in *model.Auth, secret string) (credential *proto.Credential, err error) {
+func (s *TokenServiceMock) CreateCredentials(in *model.Auth, secret string) (credential *auth_proto.Credential, err error) {
 	args := s.Called(in, secret)
 
 	if args.Get(0) != nil {
-		credential = args.Get(0).(*proto.Credential)
+		credential = args.Get(0).(*auth_proto.Credential)
 	}
 
 	return credential, args.Error(1)

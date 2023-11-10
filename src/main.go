@@ -19,7 +19,8 @@ import (
 	jsg "github.com/bookpanda/mygraderlist-auth/src/app/strategy"
 	"github.com/bookpanda/mygraderlist-auth/src/config"
 	"github.com/bookpanda/mygraderlist-auth/src/database"
-	"github.com/bookpanda/mygraderlist-auth/src/proto"
+	auth_proto "github.com/bookpanda/mygraderlist-proto/MyGraderList/auth"
+	user_proto "github.com/bookpanda/mygraderlist-proto/MyGraderList/backend/user"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -129,7 +130,7 @@ func main() {
 
 	cacheRepo := cache.NewRepository(cacheDB)
 
-	usrClient := proto.NewUserServiceClient(backendConn)
+	usrClient := user_proto.NewUserServiceClient(backendConn)
 	usrSrv := user.NewUserService(usrClient)
 
 	stg := jsg.NewJwtStrategy(conf.Jwt.Secret)
@@ -141,7 +142,7 @@ func main() {
 	aSrv := as.NewService(aRepo, tkSrv, usrSrv, conf.App)
 
 	grpc_health_v1.RegisterHealthServer(grpcServer, health.NewServer())
-	proto.RegisterAuthServiceServer(grpcServer, aSrv)
+	auth_proto.RegisterAuthServiceServer(grpcServer, aSrv)
 
 	reflection.Register(grpcServer)
 	go func() {
