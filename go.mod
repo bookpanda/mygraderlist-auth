@@ -3,7 +3,7 @@ module github.com/bookpanda/mygraderlist-auth
 go 1.21.0
 
 require (
-	github.com/bookpanda/mygraderlist-proto v0.0.2 // indirect
+	github.com/bookpanda/mygraderlist-proto v0.0.4 // indirect
 	github.com/bxcodec/faker/v3 v3.8.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
