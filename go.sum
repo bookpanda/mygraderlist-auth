@@ -42,6 +42,8 @@ github.com/bookpanda/mygraderlist-proto v0.0.4 h1:RdrexOZqbUyubyRSupHxBKsU9OuHq0
 github.com/bookpanda/mygraderlist-proto v0.0.4/go.mod h1:3+LxMLRw7Z2KI+0FekE8DfFcVzSauDCuGaUFfqPiuDQ=
 github.com/bookpanda/mygraderlist-proto v0.0.5 h1:wa5YuUcpP3DgIMv59dqcQZLnavLRqvi/f67t1CqlXaQ=
 github.com/bookpanda/mygraderlist-proto v0.0.5/go.mod h1:3+LxMLRw7Z2KI+0FekE8DfFcVzSauDCuGaUFfqPiuDQ=
+github.com/bookpanda/mygraderlist-proto v0.0.6 h1:3kPx/HrBN3nV43u6QfKWazs7mQe+ImRWe63XEwY6s1c=
+github.com/bookpanda/mygraderlist-proto v0.0.6/go.mod h1:3+LxMLRw7Z2KI+0FekE8DfFcVzSauDCuGaUFfqPiuDQ=
 github.com/bxcodec/faker/v3 v3.8.1 h1:qO/Xq19V6uHt2xujwpaetgKhraGCapqY2CRWGD/SqcM=
 github.com/bxcodec/faker/v3 v3.8.1/go.mod h1:DdSDccxF5msjFo5aO4vrobRQ8nIApg8kq3QWPEQD6+o=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
