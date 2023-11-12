@@ -122,7 +122,7 @@ func main() {
 	if err != nil {
 		log.Fatal().
 			Err(err).
-			Str("service", "rnkm-backend").
+			Str("service", "mgl-backend").
 			Msg("Cannot connect to service")
 	}
 
@@ -148,7 +148,7 @@ func main() {
 	go func() {
 		log.Info().
 			Str("service", "auth").
-			Msgf("RNKM65 auth starting at port %v", conf.App.Port)
+			Msgf("MyGraderList auth starting at port %v", conf.App.Port)
 
 		if err = grpcServer.Serve(lis); err != nil {
 			log.Fatal().

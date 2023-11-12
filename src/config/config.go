@@ -25,16 +25,9 @@ type Service struct {
 }
 
 type App struct {
-	Port            int    `mapstructure:"port"`
-	Debug           bool   `mapstructure:"debug"`
-	Secret          string `mapstructure:"secret"`
-	MaxRestrictYear int    `mapstructure:"max_restrict_year"`
-}
-
-type ChulaSSO struct {
-	Host         string `mapstructure:"host"`
-	DeeAppID     string `mapstructure:"app-id"`
-	DeeAppSecret string `mapstructure:"app-secret"`
+	Port   int    `mapstructure:"port"`
+	Debug  bool   `mapstructure:"debug"`
+	Secret string `mapstructure:"secret"`
 }
 
 type Jwt struct {
@@ -47,7 +40,6 @@ type Config struct {
 	Redis    Redis    `mapstructure:"redis"`
 	Database Database `mapstructure:"database"`
 	App      App      `mapstructure:"app"`
-	ChulaSSO ChulaSSO `mapstructure:"chula-sso"`
 	Jwt      Jwt      `mapstructure:"jwt"`
 	Service  Service  `mapstructure:"service"`
 }

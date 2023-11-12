@@ -1,0 +1,23 @@
+redis:
+  host: localhost:6379
+  password: ""
+
+database:
+  host: localhost
+  port: 3306
+  name: mgl-auth-db
+  username: root
+  password: root
+
+app:
+  port: 3002
+  debug: true
+  secret: <secret>
+
+service:
+  backend: localhost:3001
+
+jwt:
+  secret: <secret>
+  expires_in: 3600
+  issuer: https://mygraderlist.bookpanda.dev

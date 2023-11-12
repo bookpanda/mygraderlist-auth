@@ -87,10 +87,9 @@ func (t *AuthServiceTest) SetupTest() {
 	t.ServiceDownErr = errors.New("service is down")
 
 	t.conf = config.App{
-		Port:            3001,
-		Debug:           false,
-		Secret:          "asuperstrong32bitpasswordgohere!",
-		MaxRestrictYear: 3,
+		Port:   3001,
+		Debug:  false,
+		Secret: "asuperstrong32bitpasswordgohere!",
 	}
 }
 
