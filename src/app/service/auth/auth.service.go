@@ -26,7 +26,6 @@ type Service struct {
 	conf              config.App
 	oauthConfig       *oauth2.Config
 	googleOauthClient *client.GoogleOauthClient
-	auth_proto.UnsafeAuthServiceServer
 }
 
 type IRepository interface {
@@ -51,12 +50,16 @@ func NewService(
 	tokenService ITokenService,
 	userService IUserService,
 	conf config.App,
+	oauthConfig *oauth2.Config,
+	googleOauthClient *client.GoogleOauthClient,
 ) *Service {
 	return &Service{
-		repo:         repo,
-		tokenService: tokenService,
-		userService:  userService,
-		conf:         conf,
+		repo:              repo,
+		tokenService:      tokenService,
+		userService:       userService,
+		conf:              conf,
+		oauthConfig:       oauthConfig,
+		googleOauthClient: googleOauthClient,
 	}
 }
 

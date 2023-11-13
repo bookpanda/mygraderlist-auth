@@ -21,3 +21,8 @@ jwt:
   secret: <secret>
   expires_in: 3600
   issuer: https://mygraderlist.bookpanda.dev
+
+google-oauth:
+  client_id:    <client_id>
+  client_secret: <client_secret>
+  redirect_uri:  <redirect_uri>

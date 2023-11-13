@@ -17,6 +17,7 @@ import (
 	ts "github.com/bookpanda/mygraderlist-auth/src/app/service/token"
 	"github.com/bookpanda/mygraderlist-auth/src/app/service/user"
 	jsg "github.com/bookpanda/mygraderlist-auth/src/app/strategy"
+	"github.com/bookpanda/mygraderlist-auth/src/client"
 	"github.com/bookpanda/mygraderlist-auth/src/config"
 	"github.com/bookpanda/mygraderlist-auth/src/database"
 	auth_proto "github.com/bookpanda/mygraderlist-proto/MyGraderList/auth"
@@ -94,6 +95,8 @@ func main() {
 			Msg("Failed to start service")
 	}
 
+	oauthConfig := config.LoadOauthConfig(conf.Oauth)
+
 	db, err := database.InitDatabase(&conf.Database)
 	if err != nil {
 		log.Fatal().
@@ -128,6 +131,8 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 
+	gClient := client.NewGoogleOauthClient(oauthConfig)
+
 	cacheRepo := cache.NewRepository(cacheDB)
 
 	usrClient := user_proto.NewUserServiceClient(backendConn)
@@ -139,7 +144,7 @@ func main() {
 	tkSrv := ts.NewTokenService(jtSrv, cacheRepo)
 
 	aRepo := ar.NewRepository(db)
-	aSrv := as.NewService(aRepo, tkSrv, usrSrv, conf.App)
+	aSrv := as.NewService(aRepo, tkSrv, usrSrv, conf.App, oauthConfig, gClient)
 
 	grpc_health_v1.RegisterHealthServer(grpcServer, health.NewServer())
 	auth_proto.RegisterAuthServiceServer(grpcServer, aSrv)
