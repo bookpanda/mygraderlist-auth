@@ -3,7 +3,7 @@ module github.com/bookpanda/mygraderlist-auth
 go 1.21.0
 
 require (
-	github.com/bookpanda/mygraderlist-proto v0.1.1
+	github.com/bookpanda/mygraderlist-proto v0.1.2
 	github.com/bxcodec/faker/v3 v3.8.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt/v4 v4.5.0
