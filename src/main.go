@@ -92,7 +92,7 @@ func main() {
 		log.Fatal().
 			Err(err).
 			Str("service", "auth").
-			Msg("Failed to start service")
+			Msg("Failed to start service (load config)")
 	}
 
 	oauthConfig := config.LoadOauthConfig(conf.Oauth)
@@ -102,7 +102,7 @@ func main() {
 		log.Fatal().
 			Err(err).
 			Str("service", "auth").
-			Msg("Failed to start service")
+			Msg("Failed to start service (init database)")
 	}
 
 	cacheDB, err := database.InitRedisConnect(&conf.Redis)
@@ -110,7 +110,7 @@ func main() {
 		log.Fatal().
 			Err(err).
 			Str("service", "auth").
-			Msg("Failed to start service")
+			Msg("Failed to start service (init cache)")
 	}
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", conf.App.Port))
@@ -118,7 +118,7 @@ func main() {
 		log.Fatal().
 			Err(err).
 			Str("service", "auth").
-			Msg("Failed to start service")
+			Msg("Failed to start service (listen)")
 	}
 
 	backendConn, err := grpc.Dial(conf.Service.Backend, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -126,7 +126,7 @@ func main() {
 		log.Fatal().
 			Err(err).
 			Str("service", "mgl-backend").
-			Msg("Cannot connect to service")
+			Msg("Cannot connect to service (auth connecting to backend)")
 	}
 
 	grpcServer := grpc.NewServer()
