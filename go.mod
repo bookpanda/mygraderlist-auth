@@ -12,7 +12,7 @@ require (
 	github.com/rs/zerolog v1.31.0
 	github.com/spf13/viper v1.17.0
 	github.com/stretchr/testify v1.8.4
-	golang.org/x/oauth2 v0.14.0
+	golang.org/x/oauth2 v0.12.0
 	google.golang.org/grpc v1.59.0
 	gorm.io/driver/mysql v1.5.2
 	gorm.io/gorm v1.25.5
