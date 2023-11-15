@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"net/url"
 	"strings"
 
@@ -153,7 +152,7 @@ func (s *Service) VerifyGoogleLogin(ctx context.Context, req *auth_proto.VerifyG
 	email := response.Email
 	user, err := s.userService.FindByEmail(email)
 	if err != nil {
-		fmt.Println("find email err")
+		log.Print("find email err\n")
 		st, ok := status.FromError(err)
 		if ok {
 			switch st.Code() {
@@ -205,15 +204,15 @@ func (s *Service) VerifyGoogleLogin(ctx context.Context, req *auth_proto.VerifyG
 			return nil, status.Error(codes.NotFound, "not found user")
 		}
 	}
-	fmt.Print("user = ", user)
+	log.Print("user = ", user)
 
 	credentials, err := s.CreateNewCredential(&auth)
 	if err != nil {
-		fmt.Println("credential err")
+		log.Print("credential err\n")
 		log.Error().Err(err)
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	fmt.Print("credential = ", credentials)
+	log.Print("credential = ", credentials, "\n")
 
 	log.Info().
 		Str("service", "auth").
