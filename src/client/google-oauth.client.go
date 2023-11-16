@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
@@ -35,7 +36,7 @@ var (
 )
 
 func (c *GoogleOauthClient) GetUserEmail(code string) (*GoogleUserEmailResponse, error) {
-	token, err := c.oauthConfig.Exchange(oauth2.NoContext, code)
+	token, err := c.oauthConfig.Exchange(context.TODO(), code)
 	if err != nil {
 		log.Error().Err(err).Msg("Unable to exchange oauth token")
 		return nil, InvalidCode
