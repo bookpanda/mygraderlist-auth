@@ -142,6 +142,7 @@ func (s *Service) VerifyGoogleLogin(ctx context.Context, req *auth_proto.VerifyG
 	if err != nil {
 		switch err.Error() {
 		case "Invalid code":
+			log.Print("ERR invalid code\n")
 			return nil, status.Error(codes.InvalidArgument, "Invalid code")
 		default:
 			log.Error().Err(err).Msg("Unable to get user info")
@@ -201,6 +202,7 @@ func (s *Service) VerifyGoogleLogin(ctx context.Context, req *auth_proto.VerifyG
 	} else {
 		err := s.repo.FindByUserID(user.Id, &auth)
 		if err != nil {
+			log.Print("ERR not found user\n")
 			return nil, status.Error(codes.NotFound, "not found user")
 		}
 	}
