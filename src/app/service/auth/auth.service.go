@@ -97,6 +97,8 @@ func (s *Service) RefreshToken(_ context.Context, req *auth_proto.RefreshTokenRe
 
 func (s *Service) CreateNewCredential(auth *model.Auth) (*auth_proto.Credential, error) {
 	credentials, err := s.tokenService.CreateCredentials(auth, s.conf.Secret)
+	log.Print("credentials FROM TOKENSERVICE", credentials)
+
 	if err != nil {
 		return nil, err
 	}
@@ -205,6 +207,7 @@ func (s *Service) VerifyGoogleLogin(ctx context.Context, req *auth_proto.VerifyG
 	}
 
 	credentials, err := s.CreateNewCredential(&auth)
+	log.Print("credentials", credentials)
 	if err != nil {
 		log.Error().Err(err)
 		return nil, status.Error(codes.Internal, err.Error())
